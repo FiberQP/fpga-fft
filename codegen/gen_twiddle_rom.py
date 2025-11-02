@@ -5,14 +5,14 @@ import sys
 # generates a twiddle rom of SIZE depth supporting the specified widths
 
 if len(sys.argv) < 3:
-	print 'usage: %s SIZE WIDTH0 [WIDTH1...]' % sys.argv[0]
+	print('usage: %s SIZE WIDTH0 [WIDTH1...]' % sys.argv[0])
 	exit(1)
 
 N = int(sys.argv[1]);
-widths = [int(x) for x in sys.argv[2:]];
+widths = [int(x) for x in sys.argv[2:]]
 
-size = N/8;
-romDepthOrder = int(ceil(log(size)/log(2.)));
+size = int(N/8)
+romDepthOrder = int(ceil(log(size)/log(2.)))
 useLUTRAM = (romDepthOrder <= 5)
 useBlockRAM = (romDepthOrder >= 8)
 
@@ -35,7 +35,7 @@ def printROM(twBits):
 	romWidth = (twBits - 1)
 	scale = (2**romWidth)
 	fmt = '{0:0' + str(romWidth) + 'b}'
-	for i in xrange(size):
+	for i in range(size):
 		x = float(i+1)/N * (2*pi)
 		re = cos(x)
 		im = sin(x)
@@ -51,11 +51,11 @@ def printROM(twBits):
 		
 		
 		if i != 0:
-			print ',',
-		if i%6 == 0: print;
-		print '"' + fmt.format(im1) + fmt.format(re1) + '"', 
+			print(',', end=' ')
+		if i%6 == 0: print();
+		print('"' + fmt.format(im1) + fmt.format(re1) + '"', end=' ') 
 
-print '''
+print('''
 library ieee;
 library work;
 use ieee.numeric_std.all;
@@ -84,18 +84,18 @@ begin
 	addr1 <= romAddr when rising_edge(clk);
 	data0 <= rom(to_integer(addr1));
 	data1 <= data0 when rising_edge(clk);
-	romData <= data1;'''.format(romDepthOrder, name, extraCode)
+	romData <= data1;'''.format(romDepthOrder, name, extraCode))
 
 for twBits in widths:
-	print '''
+	print('''
 g{twBits:d}:
 	if twBits = {twBits:d} generate
-		rom <= ('''.format(**locals()), 
+		rom <= ('''.format(**locals()), end=' ') 
 	printROM(twBits);
-	print ''');
-	end generate;'''
+	print(''');
+	end generate;''')
 
-print;
-print '''
+print()
+print('''
 end a;
-'''
+''')

@@ -3,22 +3,22 @@ from math import *
 import sys
 
 if len(sys.argv) < 3:
-	print 'usage: %s SIZE WIDTH0 [WIDTH1...]' % sys.argv[0]
+	print('usage: %s SIZE WIDTH0 [WIDTH1...]' % sys.argv[0])
 	exit(1)
 
 N = int(sys.argv[1]);
-widths = [int(x) for x in sys.argv[2:]];
+widths = [int(x) for x in sys.argv[2:]]
 
 # this twiddle generator is the minor part of a size M twiddle genenerator;
 # currently M = N * (4N)
 M = N * (N*4)
 
 
-reducedBits = False;
+reducedBits = False
 # if reducedBits is true, output fits in a twiddleBits bit signed integer.
 # if reducedBits is false, output fits in a twiddleBits+1 bit signed integer.
 
-depthOrder = int(ceil(log(N)/log(2.)));
+depthOrder = int(ceil(log(N)/log(2.)))
 romWidth = 'twBits'
 if not reducedBits:
 	romWidth = 'twBits + 1'
@@ -32,7 +32,7 @@ def printROM(twBits):
 
 	fmt = '{0:0' + str(twBits) + 'b}'
 	fullScale = M
-	for i in xrange(N):
+	for i in range(N):
 		x = float(i)/fullScale * (2*pi)
 		
 		re1 = int(round(cos(x)*scale))
@@ -43,13 +43,13 @@ def printROM(twBits):
 			im1 += (2**twBits)
 		
 		if i != 0:
-			print ',',
-		if i%6 == 0: print;
-		print '"' + fmt.format(im1) + fmt.format(re1) + '"', 
+			print(',', end=' ')
+		if i%6 == 0: print()
+		print('"' + fmt.format(im1) + fmt.format(re1) + '"', end=' ') 
 
 name = 'twiddleGeneratorPartial'+str(N)
 
-print '''
+print('''
 library ieee;
 library work;
 use ieee.numeric_std.all;
@@ -79,18 +79,18 @@ begin
 	data0 <= rom(to_integer(addr1));
 	data1 <= data0 when rising_edge(clk);
 	twData <= complex_unpack(data1);
-'''.format(depthOrder, name, romWidth),
+'''.format(depthOrder, name, romWidth), end=' ')
 
 for twBits in widths:
-	print '''
+	print('''
 g{twBits:d}:
 	if twBits = {twBits:d} generate
-		rom <= ('''.format(**locals()), 
+		rom <= ('''.format(**locals()), end=' ') 
 	printROM(twBits)
-	print ''');
-	end generate;'''
+	print(''');
+	end generate;''')
 
-print;
-print '''
+print()
+print('''
 end a;
-'''
+''')
